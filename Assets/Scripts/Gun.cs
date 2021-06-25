@@ -5,6 +5,9 @@ using UnityEngine;
 public class Gun : IWeapon
 {
     [SerializeField]
+    private float firePower;
+
+    [SerializeField]
     private GameObject ammo;
     // Start is called before the first frame update
     void Start()
@@ -34,7 +37,7 @@ public class Gun : IWeapon
 
         Rigidbody ammoRigidbody = ammoFired.GetComponent<Rigidbody>();
 
-        ammoRigidbody.velocity = this.transform.forward * 5; //ammo.GetComponent<Ammo>().speed
+        ammoRigidbody.velocity = this.transform.forward * firePower; //ammo.GetComponent<Ammo>().speed
 
         //ammoRigidbody.AddForce(this.transform.position.);
     }

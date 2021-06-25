@@ -2,22 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player : Mortal
 {
     [SerializeField]
-    private float speed;
+    private float InitialHealth;
+    [SerializeField]
+    private float speedMultiplier;
 
     [SerializeField]
-    private string WALK_FORWARD_KEY;
-
-    [SerializeField]
-    private string WALK_LEFT_KEY;
-
-    [SerializeField]
-    private string WALK_RIGHT_KEY;
-
-    [SerializeField]
-    private string ATTACK_KEY;
+    private float jumpingMultiplier;
 
     [SerializeField]
     private GameObject weapon;
@@ -25,57 +18,57 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        SetInitialHealth(InitialHealth);
     }
 
     // Update is called once per frame
     void Update()
     {
-
-    }
-
-    private void OnGUI()
-    {
-        if (Event.current.Equals(Event.KeyboardEvent(WALK_FORWARD_KEY)))
+        if (Input.GetKey(KeyCode.W)){
+            Walk(this.transform.forward);
+        }
+        if (Input.GetKey(KeyCode.A)){
+            Walk(this.transform.right * -1f);
+        }
+        if (Input.GetKey(KeyCode.D))
         {
-            Walk_forward();
+            Walk(this.transform.right);
         }
-
-        if (Event.current.Equals(Event.KeyboardEvent(WALK_LEFT_KEY))){
-            Walk_left();
-        }
-
-        if (Event.current.Equals(Event.KeyboardEvent(WALK_RIGHT_KEY)))
+        if (Input.GetKey(KeyCode.S))
         {
-            Walk_right();
+            Walk(this.transform.forward * -1f); ;
         }
-
-
-        if (Event.current.Equals(Event.KeyboardEvent(ATTACK_KEY)))
+        if (Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Return))
         {
             Attack();
+        }
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Jump();
         }
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("Ouch!");
         Debug.Log(collision.gameObject.name);
     }
 
-    private void Walk_forward()
+    private void Walk(Vector3 direction)
     {
-        this.transform.position += this.gameObject.transform.forward * speed;
+        this.transform.position += direction * Time.deltaTime * speedMultiplier;
+        Debug.Log("WALK");
     }
 
-    private void Walk_left()
+    private void Jump()
     {
-        this.transform.position += this.gameObject.transform.right * speed * -1;
-    }
-
-    private void Walk_right()
-    {
-        this.transform.position += this.gameObject.transform.right * speed;
+        Rigidbody rigidbody = this.GetComponent<Rigidbody>();
+        const float VELOCITY_THRESHOLD = .001f;
+        //Character is falling or jumping
+        if (Mathf.Abs(rigidbody.velocity.y) <= VELOCITY_THRESHOLD)
+        {
+            this.GetComponent<Rigidbody>().velocity = this.transform.up * jumpingMultiplier;
+        }
+        
     }
     
     private void Attack()
