@@ -45,6 +45,7 @@ public abstract class Mortal : MonoBehaviour
     protected void SetInitialHealth(float health)
     {
         this.healthInitial = health;
+        this.health = health;
         setMaxHealthStartSubscriber.Invoke(health);
         healthBarSubscriber.Invoke(health);
     }
