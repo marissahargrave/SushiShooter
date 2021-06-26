@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Ammo : MonoBehaviour
 {
+    protected float ammoDamage;
     // Start is called before the first frame update
     void Start()
     {
@@ -11,14 +12,17 @@ public class Ammo : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    protected void SetAmmoDamage(float damage)
     {
-        
+        this.ammoDamage = damage;
     }
 
-    private void OnCollisionEnter(Collision collision)
+    protected void DamageObject(GameObject obj)
     {
-        Debug.Log("Target hit");
-        Debug.Log(collision.gameObject.name);
+        Mortal mortal = obj.GetComponent<Mortal>();
+        if (mortal)
+        {
+            mortal.ApplyDamage(ammoDamage);
+        }
     }
 }

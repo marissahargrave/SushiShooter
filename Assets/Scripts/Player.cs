@@ -11,6 +11,8 @@ public class Player : Mortal
 
     [SerializeField]
     private float jumpingMultiplier;
+    [SerializeField]
+    private float rotateSpeed;
 
     [SerializeField]
     private GameObject weapon;
@@ -28,11 +30,11 @@ public class Player : Mortal
             Walk(this.transform.forward);
         }
         if (Input.GetKey(KeyCode.A)){
-            Walk(this.transform.right * -1f);
+            Rotate(this.transform.right * -1f);
         }
         if (Input.GetKey(KeyCode.D))
         {
-            Walk(this.transform.right);
+            Rotate(this.transform.right);
         }
         if (Input.GetKey(KeyCode.S))
         {
@@ -48,16 +50,38 @@ public class Player : Mortal
         }
     }
 
-    private void OnCollisionEnter(Collision collision)
+    /*private void OnCollisionEnter(Collision collision)
     {
         Debug.Log(collision.gameObject.name);
+    }*/
+
+    private void OnTriggerStay(Collider collider)
+    {
+        IInteractable interactable = collider.gameObject.GetComponent<IInteractable>();
+        if (Input.GetKey(KeyCode.I) && interactable)
+        {
+            Interact(interactable);
+        }
     }
 
     private void Walk(Vector3 direction)
     {
-        this.transform.position += direction * Time.deltaTime * speedMultiplier;
-        Debug.Log("WALK");
+        RaycastHit hit;
+        bool isHit = Physics.Raycast(this.transform.position, direction, out hit, (Time.deltaTime * speedMultiplier));
+        if (!isHit || hit.collider.isTrigger)
+        {
+            this.transform.position += direction * Time.deltaTime * speedMultiplier;
+        }
+
+        //this.gameObject.GetComponent<Rigidbody>().velocity = direction * speedMultiplier;
     }
+
+    private void Rotate(Vector3 direction)
+    {
+        Quaternion toRotation = Quaternion.LookRotation(direction, Vector3.up);
+        this.transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, rotateSpeed * Time.deltaTime);
+    }
+
 
     private void Jump()
     {
@@ -74,5 +98,10 @@ public class Player : Mortal
     private void Attack()
     {
         weapon.GetComponent<IWeapon>().Attack();
+    }
+
+    private void Interact(IInteractable interactable)
+    {
+        interactable.Interact();
     }
 }

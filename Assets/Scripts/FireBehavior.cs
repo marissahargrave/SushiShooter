@@ -6,30 +6,27 @@ public class FireBehavior : MonoBehaviour
 {
     private const float fireDamage = .5f;
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider collider)
     {
-        bool isFire = (collision.gameObject.GetComponent<FireBehavior>() != null);
-        bool isOnFire = false;
+        bool isFire = (collider.gameObject.GetComponent<FireBehavior>() != null);
+        bool isOnFire;
         if (!isFire)
         {
-            isOnFire = (collision.gameObject.transform.GetComponentsInChildren<FireBehavior>().Length != 0);
+            isOnFire = (collider.gameObject.transform.GetComponentsInChildren<FireBehavior>().Length != 0);
 
             if (!isOnFire)
             {
-                Ammo ammo = collision.gameObject.GetComponent<Ammo>();
-
-                if (ammo) { AddFlames(collision.gameObject); }
+                Ammo ammo = collider.gameObject.GetComponent<Ammo>();
+                Mortal mortal = collider.gameObject.GetComponent<Mortal>();
+                if (ammo || mortal) { AddFlames(collider.gameObject); }
             }
             
         }
-        Debug.Log(collision.gameObject.name + "on fire is "+ isOnFire + ", is fire is " + isFire);
-
-
     }
 
-    private void OnCollisionStay(Collision collision)
+    private void OnTriggerStay(Collider collider)
     {
-        Mortal mortal = collision.gameObject.GetComponent<Mortal>();
+        Mortal mortal = collider.gameObject.GetComponent<Mortal>();
         if (mortal)
         {
             Debug.Log(fireDamage * Time.deltaTime);

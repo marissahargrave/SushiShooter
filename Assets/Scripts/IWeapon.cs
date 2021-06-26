@@ -4,7 +4,5 @@ using UnityEngine;
 
 public abstract class IWeapon : MonoBehaviour
 {
-
-    // Update is called once per frame
     public abstract void Attack();
 }
