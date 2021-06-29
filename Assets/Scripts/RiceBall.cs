@@ -16,9 +16,4 @@ public class RiceBall : Ammo
     {
         DamageObject(collision.gameObject);
     }
-
-    private void OnDestroy()
-    {
-        
-    }
 }
